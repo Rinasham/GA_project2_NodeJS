@@ -24,7 +24,7 @@ mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongo
 
 
 const quizSchema = new mongoose.Schema({
-  id: Number,
+  // id: Number,
   question: {
     type : String,
     required : true
