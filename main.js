@@ -20,8 +20,8 @@ app.use(express.static('public'))
 const DB_PASS = process.env.DB_PASSWORD
 
 mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`,{useNewUrlParser: true})
-
-
+// mongoose.connect(`mongodb://localhost:27017/QuizDB`,{useNewUrlParser: true})
+console.log(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`)
 
 const quizSchema = new mongoose.Schema({
   question: {
@@ -56,10 +56,13 @@ const Quiz = mongoose.model('Quiz', quizSchema)
 
 app.get("/quiz/:category", function(req, res){
   const requestedCategory = req.params.category;
+  console.log(requestedCategory);
 
   Quiz.find({category: {$regex:requestedCategory, $options: '$i'}},function(err, foundQuiz){
     if(!err){
+      console.log(typeof(foundQuiz));
       // console.log(foundQuiz);
+      // res.send(foundQuiz)
       res.send(foundQuiz)
       } else {
         res.send(err)
