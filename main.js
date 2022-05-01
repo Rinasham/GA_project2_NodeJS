@@ -97,10 +97,11 @@ app.post('/add-quiz', function(req, res){
 
 //----------------------------------------------------
 
-let port = process.env.port
-if (port == null || port == ""){
-  port = 3000
-}
+let port = process.env.port || 3000;
+// if (port == null || port == ""){
+//   port = 3000
+// }
+
 
 console.log(port);
 
