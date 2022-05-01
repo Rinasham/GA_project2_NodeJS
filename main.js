@@ -24,7 +24,6 @@ mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongo
 
 
 const quizSchema = new mongoose.Schema({
-  // id: Number,
   question: {
     type : String,
     required : true
@@ -42,7 +41,7 @@ const quizSchema = new mongoose.Schema({
   category: {
     type : String,
     required : true
-  },
+  }
 })
 
 const Quiz = mongoose.model('Quiz', quizSchema)
@@ -54,12 +53,13 @@ const Quiz = mongoose.model('Quiz', quizSchema)
 //-------------Requests targeting a specific article-----------------------
 
 
+
 app.get("/quiz/:category", function(req, res){
   const requestedCategory = req.params.category;
 
   Quiz.find({category: {$regex:requestedCategory, $options: '$i'}},function(err, foundQuiz){
     if(!err){
-      console.log(foundQuiz);
+      // console.log(foundQuiz);
       res.send(foundQuiz)
       } else {
         res.send(err)
@@ -67,6 +67,30 @@ app.get("/quiz/:category", function(req, res){
   })
 })
 
+
+  //  Requests for adding a question
+
+app.post('/add-quiz', function(req, res){
+  const quiz = new Quiz({
+    question: req.body.question,
+    answers: {
+      answer_a : req.body.answer_a,
+      answer_b : req.body.answer_b,
+      answer_c : req.body.answer_c,
+      answer_d : req.body.answer_d
+    },
+    correct_answer : req.body.correct_answer,
+    category : req.body.category
+  })
+
+  quiz.save(function(err){
+    if(!err){
+      res.send('Successfully added a new article.')
+    } else {
+      res.send(err)
+    }
+  })
+})
 
 //----------------------------------------------------
 
