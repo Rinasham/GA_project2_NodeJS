@@ -20,8 +20,8 @@ app.use(express.static('public'))
 const DB_PASS = process.env.DB_PASSWORD
 
 //////////////////////////////////////////////////////////////
-// mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`,{useNewUrlParser: true})
-mongoose.connect(`mongodb://localhost:27017/QuizDB`,{useNewUrlParser: true})
+mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`,{useNewUrlParser: true})
+// mongoose.connect(`mongodb://localhost:27017/QuizDB`,{useNewUrlParser: true})
 //////////////////////////////////////////////////////////////
 
 const quizSchema = new mongoose.Schema({
