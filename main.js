@@ -19,9 +19,10 @@ app.use(express.static('public'))
 
 const DB_PASS = process.env.DB_PASSWORD
 
+//////////////////////////////////////////////////////////////
 mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`,{useNewUrlParser: true})
 // mongoose.connect(`mongodb://localhost:27017/QuizDB`,{useNewUrlParser: true})
-
+//////////////////////////////////////////////////////////////
 
 const quizSchema = new mongoose.Schema({
   question: {
@@ -57,14 +58,35 @@ const Quiz = mongoose.model('Quiz', quizSchema)
 app.get("/quiz/:category", function(req, res){
   const requestedCategory = req.params.category;
 
-  Quiz.find({category: {$regex:requestedCategory, $options: '$i'}},function(err, foundQuiz){
-    if(!err){
-      res.send(foundQuiz)
-      } else {
-        res.send(err)
-      }
-  })
+  Quiz.count({category : requestedCategory}).exec(function(err, count){
+    let random = Math.floor(Math.random() * count)
+
+    // Again query all users but only fetch one offset by our random #
+    Quiz.findOne({category : requestedCategory}).skip(random).exec(
+      function (err, foundQuiz) {
+        if(!err){
+          console.log(foundQuiz);
+          res.send(foundQuiz)
+          } else {
+            res.send(err)
+          }
+      })
+    })
 })
+
+
+// app.get("/quiz/:category", function(req, res){
+//   const requestedCategory = req.params.category;
+
+//   Quiz.find({category: {$regex:requestedCategory, $options: '$i'}},function(err, foundQuiz){
+//     if(!err){
+//       res.send(foundQuiz)
+//       } else {
+//         res.send(err)
+//       }
+//   })
+// })
+
 
 
 // return ONE quiz corresponding to the requested id
@@ -129,6 +151,23 @@ app.put('/update', function(req, res){
     }
   )
 })
+
+
+// delete the requested quiz
+app.delete(function(req, res){
+  Quiz.deleteOne(
+    {title: req.params.id},
+    function(err){
+      if(!err){
+        res.send('Successfully deleted the corresponding article.')
+      }
+    }
+  )
+})
+
+
+
+
 
 //----------------------------------------------------
 
