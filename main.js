@@ -21,7 +21,7 @@ const DB_PASS = process.env.DB_PASSWORD
 
 mongoose.connect(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`,{useNewUrlParser: true})
 // mongoose.connect(`mongodb://localhost:27017/QuizDB`,{useNewUrlParser: true})
-console.log(`mongodb+srv://admin-rina:${DB_PASS}@clustergaproj2.buzm8.mongodb.net/QuizDB`)
+
 
 const quizSchema = new mongoose.Schema({
   question: {
@@ -56,13 +56,9 @@ const Quiz = mongoose.model('Quiz', quizSchema)
 
 app.get("/quiz/:category", function(req, res){
   const requestedCategory = req.params.category;
-  console.log(requestedCategory);
 
   Quiz.find({category: {$regex:requestedCategory, $options: '$i'}},function(err, foundQuiz){
     if(!err){
-      console.log(typeof(foundQuiz));
-      // console.log(foundQuiz);
-      // res.send(foundQuiz)
       res.send(foundQuiz)
       } else {
         res.send(err)
@@ -71,7 +67,20 @@ app.get("/quiz/:category", function(req, res){
 })
 
 
-  //  Requests for adding a question
+// return ONE quiz corresponding to the requested id
+app.get("/get/:id", function(req, res){
+  const requestedId = req.params.id;
+  Quiz.findById(requestedId,function(err, foundQuiz){
+    if(!err){
+      res.send(foundQuiz)
+      } else {
+        res.send(err)
+      }
+  })
+})
+
+
+//  Requests for adding a question
 
 app.post('/add-quiz', function(req, res){
   const quiz = new Quiz({
@@ -95,12 +104,35 @@ app.post('/add-quiz', function(req, res){
   })
 })
 
+
+// update a quiz
+app.put('/update', function(req, res){
+  Quiz.updateOne(
+    {id : req.body.id},
+    {
+      question: req.body.question,
+      answers: {
+        answer_a : req.body.answer_a,
+        answer_b : req.body.answer_b,
+        answer_c : req.body.answer_c,
+        answer_d : req.body.answer_d
+      },
+      correct_answer : req.body.correct_answer,
+      category : req.body.category
+    },
+    function(err){
+      if(!err){
+        res.send('Successfully updated quiz.')
+      } else {
+        res.send(err)
+      }
+    }
+  )
+})
+
 //----------------------------------------------------
 
 let port = process.env.PORT || 3000;
-// if (port == null || port == ""){
-//   port = 3000
-// }
 
 
 console.log(port);
